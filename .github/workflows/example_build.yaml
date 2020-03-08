@@ -65,9 +65,6 @@ jobs:
       - name: 'build example'
         run: make build
 
-      - name: 'install dependencies'
-        run: make test-prepare
-
       - name: 'test example'
         run: make test
 
