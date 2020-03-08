@@ -26,10 +26,6 @@ else
 endif
 export GOOS ?= $(TARGET_OS_LOCAL)
 
-ifneq ($(TARGET_OS_LOCAL), windows)
-	NO7Z = true
-endif
-
 ifeq ($(GOOS),windows)
 	BINARY_EXT_LOCAL:=.exe
 	GOLANGCI_LINT:=golangci-lint.exe
@@ -87,7 +83,11 @@ ifeq ("$(wildcard $(OUTPUT_PATH))", "")
 	mkdir -p $(OUTPUT_PATH)
 endif
 
+ifeq ($(GOOS),windows)
+	zip $(OUTPUT_PATH)/example_$(GOOS)_amd64$(ARCHIVE_EXT) example$(BINARY_EXT)
+else
 	tar -czvf "$(OUTPUT_PATH)/example_$(GOOS)_amd64$(ARCHIVE_EXT)" "example$(BINARY_EXT)"
+endif
 
 release: build archive generate-checksum
 
