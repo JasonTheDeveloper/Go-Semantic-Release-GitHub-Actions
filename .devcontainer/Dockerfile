@@ -49,7 +49,7 @@ RUN apt-get update \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get -y install git procps wget nano zsh inotify-tools jq
+RUN apt-get -y install git procps wget nano zsh inotify-tools jq zip
 
 # Verify git, process tools installed
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
