@@ -22,11 +22,13 @@ The DevContainer in this repository is configured specifically for Go and instal
 
 Sample DevContainers for other languages can be found [here](https://github.com/microsoft/vscode-dev-containers/tree/master/containers).
 
-## Why semantic-release?
+## Semantic-Release
 
-[Semantic-release](https://github.com/semantic-release/semantic-release) is a great tool, standalone tool for managing versioning and release of packages/binaries. Semantic-release is responsible for generating change logs, increasing the semantic version, and creating new releases in GitHub.
+### Why semantic-release?
 
-### GoReleaser vs. semantic-release
+[Semantic-release](https://github.com/semantic-release/semantic-release) is a great, standalone tool that sits in your CI pipeline for managing versioning and release of packages/binaries. Semantic-release is responsible for generating change logs, increasing the semantic version, and creating new releases in GitHub.
+
+#### GoReleaser vs. semantic-release
 
 [GoReleaser](https://github.com/goreleaser/goreleaser) is another tool that could have been used over semantic-release. It generates go binaries for several platforms, it also creates a new GitHub release but on top of that, GoReleaser also pushes a HomeBrew formula to a tap repository!
 
@@ -38,7 +40,7 @@ So why not GoReleaser? A couple reasons.
 
 Putting aside the fact this repository uses go as an example project, with some minor tweaks, the configurations used for semantic-release in this repository can be transferred and applied to any project regardless of programming language.
 
-### GitHub Release
+#### GitHub Release
 
 Semantic-release was chosen for creating new GitHub releases over other actions like [Create Release](https://github.com/marketplace/actions/create-release) because semantic-release is smart enough to only include changes that happened between releases automatically.
 
@@ -52,6 +54,100 @@ Looking at the [workflow](.github/workflows/example_build.yaml), linting, testin
 
 Firstly, `lint` and `test` run in parallel. `test` runs on `ubuntu-latest`, `macos-latest`, and `windows-latest`, building and testing on Go version `1.12.x` and `1.13.x`. If all jobs complete successfully, the `release` job is then triggered.
 
-The reason `lint` isn't apart of the `test` job is because we don't need to worry about whether the project is lintted correctly on different operating systems as linting is more to do with coding styles which is not affected by the system you're running.
+The reason `lint` isn't apart of the `test` job is because we don't need to worry about whether the project is formatted correctly on different operating systems as linting is more to do with coding styles which is not affected by the system you're running.
+
+Another thing you may notice is the workflow is [triggered](.github/workflows/example_build.yaml#L3-L11) when a pull request is submitted to master and whenever a push to master is performed. 
+
+We could have split the workflow into two, one for building and testing for pull request, while the other is used for when pull requests are completed and merge with master to release the binaries. This could save on build times when PRs are performed. 
+
+Instead an `if` [condition](.github/workflows/example_build.yaml#L75) is used to only run the `release` job only when triggered from a push to the master branch.
 
 More information about using GitHub Actions can be found [here](https://help.github.com/en/actions).
+
+## How it Flows Together
+
+### Semantic-release
+
+It all starts with making and committing a change. The way semantic-release works is through the git commit message.
+
+In order for semantic-release to know how to generate the next release version, you must follow the correct message schema.
+
+```commit
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
+
+The **header** is mandatory and the **scope** of the header is optional. The footer can contain a closing reference to an issue.
+
+The type must be one of the following:
+
+| Type | Description |
+| - | - |
+| **feat** | A new feature |
+| **fix** | A bug fix |
+| **perf** | A code change that improves performance |
+| **build** | Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm) |
+| **ci** | Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs) |
+| **docs** | Documentation only changes |
+| **refactor** | A code change that neither fixes a bug nor adds a feature |
+| **style** | Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc) |
+| **test** | Adding missing tests or correcting existing tests |
+
+**Note:** new releases are only triggered when type `fix`, `feat` or `perf` are used in your commit message.
+
+| Commit message | Release type |
+| - | - |
+| `fix(pencil): stop graphite breaking when too much pressure applied` | Patch Release |
+| `feat(pencil): add 'graphiteWidth' option` | ~~Minor~~ Feature Release  |
+| `perf(pencil): remove graphiteWidth option`<br><br>`BREAKING CHANGE: The graphiteWidth option has been removed.`<br>`The default graphite width of 10mm is always used for performance reasons.` | ~~Major~~ Breaking Release |
+
+For more information, see [semantic-release](https://github.com/semantic-release/semantic-release#how-does-it-work).
+
+### GitHub Action
+
+In our [workflow](.github/workflows/example_build.yaml), we've set it up so that the workflow is triggered whenever a pull request or a push to the master branch. The semantic-release portion of the workflow will only run once the PR has been approved and merged into master.
+
+Assuming the pull request is approved and merged, the workflow will run again but this time it will also run the `release` [job](.github/workflows/example_build.yaml) of the workflow.
+
+The `release` job of our workflow is responsible primarily to building our project's binaries, generating change log, tagging and creating a new GitHub release.
+
+Lets take a moment and examine what's happening. Below you'll find a snippet of the workflow.
+
+```yaml
+release:
+    name: 'release example'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - name: 'setup node.js'
+        uses: actions/setup-node@v1.4.0
+        with:
+          node-version: 12
+
+      - name: 'install go ${{ env.GOVER }}'
+        uses: actions/setup-go@v1.1.2
+        with:
+          go-version: ${{ env.GOVER }}
+
+      - name: 'checkout'
+        uses: actions/checkout@master
+
+      - name: 'install dependencies'
+        run: npm ci
+
+      - name: 'generate semantic version'
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+```
+
+1. The first step is to install `node.js` onto our build agent. This is necessary for semantic-release to run as semantic-release is node based.
+2. Install `Go` so that we can build the example project in this repository.
+3. Checkout this repository so the build agent has a copy of the project to work from.
+4. Next we're going to download the required npm modules specified in [package.json](package.json).
+5. With that all setup, semantic-release can do its thing!
