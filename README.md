@@ -4,7 +4,23 @@
 
 This project is purely meant to serve as an example of how you could use [DevContainers](https://code.visualstudio.com/docs/remote/containers) for development, [semantic-release](https://github.com/semantic-release/semantic-release) to manage releases, and [GitHub Actions](https://github.com/features/actions) for testing/building go targeting different architectures.
 
-## Why Semantic-Release?
+## DevContainers
+
+DevContainers are terrific for getting other contributors up and running with little hassle. DevContainers takes the headache away from having to setup your development environment and ensures everyone on your team, contributing to the project all have the same setup regardless of their operating system and what dependencies they're missing.
+
+And because DevContainers are containerised, if anything happens and you need to destroy and recreate your environment, you can with a click of a button!
+
+There are a couple things you need in order to run the DevContainer and they are:
+
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
+- [Docker](https://docs.docker.com/install/)
+
+A full DevContainer setup guide can be found [here](https://code.visualstudio.com/docs/remote/containers#_getting-started).
+
+The DevContainer in this repository is configured specifically for Go and installs additional packages and Visual Studio Code extensions to make developing Go a bit nicer.
+
+## Why semantic-release?
 
 Semantic-release is a great tool, standalone tool for managing versioning and release of packages/binaries. Semantic-release is responsible for generating change logs, increasing the semantic version, and creating new releases in GitHub.
 
@@ -17,6 +33,8 @@ So why not GoReleaser? A couple reasons.
 1. The release notes are not formatted as they are with semantic-release.
 2. GoReleaser does not commit a `CHANGELOG.md` back to the repo.
 3. It appears GoReleaser only works with Go projects, while semantic-release can work regardless of the underlining language as it's git commit based.
+
+Putting aside the fact this repository uses go as an example project, with some minor tweaks, the configurations used for semantic-release in this repository can be transferred and applied to any project regardless of programming language.
 
 ### GitHub Release
 
