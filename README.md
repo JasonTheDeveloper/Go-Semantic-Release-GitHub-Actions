@@ -1,6 +1,6 @@
 # Go + Semantic-Release + GitHub Actions
 
-![Example Build](https://github.com/JasonTheDeveloper/Go-Semantic-Release-GitHub-Actions/workflows/build/badge.svg?branch=master) [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+[![build](https://github.com/JasonTheDeveloper/Go-Semantic-Release-GitHub-Actions/workflows/build/badge.svg?branch=master)](https://github.com/JasonTheDeveloper/Go-Semantic-Release-GitHub-Actions/actions?query=workflow%3Abuild) [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 This project is purely meant to serve as an example of how you could use [DevContainers](https://code.visualstudio.com/docs/remote/containers) for development, [semantic-release](https://github.com/semantic-release/semantic-release) to manage releases, and [GitHub Actions](https://github.com/features/actions) for testing/building go targeting different architectures.
 
