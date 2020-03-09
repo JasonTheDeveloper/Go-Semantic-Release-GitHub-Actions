@@ -10,7 +10,8 @@
         "ms-vscode.go",
         "coenraads.bracket-pair-colorizer-2",
         "windmilleng.vscode-go-autotest",
-        "premparihar.gotestexplorer"
+        "premparihar.gotestexplorer",
+        "streetsidesoftware.code-spell-checker"
     ],
     "settings": {
         "terminal.integrated.shell.linux": "zsh",
