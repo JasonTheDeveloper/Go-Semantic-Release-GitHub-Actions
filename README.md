@@ -300,3 +300,18 @@ release:
 3. Checkout this repository so the build agent has a copy of the project to work from.
 4. Next we're going to download the required npm modules specified in [package.json](package.json).
 5. With that all setup, semantic-release can do its thing!
+
+#### Semantic-release
+
+As mentioned [previously](#semantic-release), we configured semantic-release to utilise a couple different plugins to generate changelog and release version, build and publish the binaries.
+
+Once our workflow hits the final step, running semantic-release, here's how semantic-release flows:
+
+1. Analyse the commit messages and generates the next release's version.
+
+**Note:** At this point, if there was no changes made to the project that requires a new release (e.g. type `fix`, `feat` or `pref` were not used since the last release) then semantic-release will stop here and would not continue.
+
+2. Generate `CHANGELOG.md` with the changes.
+3. Commits `CHANGELOG.md` back to the repository under `docs`.
+4. Export the next release version followed by building the example project for `linux`, `darwin` and `windows` architectures. The exported release version is injected when building the binaries using `-ldflags` as mentioned [previously](#build-+-ldflags).
+5. Finally, a new GitHub release is created with our newly built binaries and accompanied changelog.
