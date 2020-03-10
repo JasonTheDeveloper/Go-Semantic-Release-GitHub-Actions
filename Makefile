@@ -4,6 +4,8 @@
 
 GIT_VERSION = $(shell git rev-list -1 HEAD)
 
+BUILD_DATE = $(shell date -u)
+
 ifdef RELEASE
 	EXAMPLE_VERSION := $(RELEASE)
 else
@@ -69,7 +71,7 @@ test:
 #     Build      #
 ##################
 
-LDFLAGS:=-X main.commit=$(GIT_VERSION) -X main.version=$(EXAMPLE_VERSION) -X "main.date=$(shell date -u)"
+LDFLAGS:=-X main.commit=$(GIT_VERSION) -X main.version=$(EXAMPLE_VERSION) -X "main.date=$(BUILD_DATE)"
 
 build::
 	GOOS=$(GOOS) GOARCH=amd64 go build -ldflags='$(LDFLAGS)' -o example$(BINARY_EXT) main.go
