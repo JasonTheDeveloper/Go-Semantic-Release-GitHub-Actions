@@ -66,6 +66,73 @@ More information about using GitHub Actions can be found [here](https://help.git
 
 ## How it Flows Together
 
+### Go
+
+In this repository theres an extremely basic Go project to demonstrate how semantic-release can be used as apart of your CI pipeline.
+
+Lets have a look at what the Go project is actually doing.
+
+```go
+package main
+
+import "fmt"
+
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
+func main() {
+	fmt.Printf("version %v, commit %v, built at %v", version, commit, date)
+}
+```
+
+Above `func main()` you'll notice we're declaring 3 variables. `version`, `commit` and `date`. Right now they have default values set.
+
+Inside `func main()` all we're doing is printing to console the `version`, `commit` and `build` variables.
+
+Running `go run main.go` from your terminal should return:
+
+```cli
+version dev, commit none, built at unknown
+```
+
+What we can do is mainly change `version`, `commit` and `build` values inside [main.go](main.go) every time a pull request is made but that's tedious and why do that when semantic-release can do that for us!
+
+#### Build + ldflags
+
+In Go, when we go to build the project we can actually override values in the project using `-ldflags`.
+
+Having a look in [Makefile](Makefile#L72-75) we see the following:
+
+```makefile
+GIT_VERSION = $(shell git rev-list -1 HEAD)
+
+ifdef RELEASE
+	EXAMPLE_VERSION := $(RELEASE)
+else
+	EXAMPLE_VERSION := dev
+endif
+
+BUILD_DATE = $(shell date -u)
+
+LDFLAGS:=-X main.commit=$(GIT_VERSION) -X main.version=$(EXAMPLE_VERSION) -X "main.date=$(BUILD_DATE)"
+
+build::
+	GOOS=$(GOOS) GOARCH=amd64 go build -ldflags='$(LDFLAGS)' -o example$(BINARY_EXT) main.go
+```
+
+What we're doing is grabbing the current git commit hash and setting it to `GIT_VERSION`. 
+
+Next we're checking if `$RELEASE` is set or not. If it's not, `EXAMPLE_VERSION` is set to `dev`, otherwise we set `EXAMPLE_VERSION` to `RELEASE`. `RELEASE` will eventually come from semantic-release.
+
+Using `date -u`, BUILD_DATE is used to hold the current date and time.
+
+After that, we construct `LDFLAGS` using our just defined variables and pass them in using the `-ldflags` when running `go build`.
+
+For more in-depth tutorial on using `-ldflags`, see [Using ldflags to Set Version Information for Go Applications](https://www.digitalocean.com/community/tutorials/using-ldflags-to-set-version-information-for-go-applications).
+
 ### Semantic-release
 
 It all starts with making and committing a change. The way semantic-release works is through the git commit message.
