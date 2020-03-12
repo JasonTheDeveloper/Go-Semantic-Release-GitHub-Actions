@@ -24,13 +24,13 @@ This project is purely meant to serve as an example of how you could use [DevCon
 
 ## Overview
 
-The following is a brief overview of what's in this repository and how they're setup.
+The following is a brief overview of what's in this repository and how they're configured.
 
 ### DevContainers
 
 [DevContainers](https://code.visualstudio.com/docs/remote/containers) are terrific for getting other contributors up and running with little hassle. DevContainers takes the headache away from having to setup your development environment and ensures everyone on your team, contributing to the project all have the same setup regardless of their operating system and what dependencies they're missing.
 
-And because DevContainers are containerised, if anything happens and you need to destroy and recreate your environment, you can with a click of a button!
+Not only that but because DevContainers are containerised (as the name implies), if anything happens and you need to destroy and recreate your environment, you can with a click of a button!
 
 There are a couple things you need in order to run the DevContainer and they are:
 
@@ -40,15 +40,15 @@ There are a couple things you need in order to run the DevContainer and they are
 
 A full DevContainer setup guide can be found [here](https://code.visualstudio.com/docs/remote/containers#_getting-started).
 
-The DevContainer in this repository is configured specifically for Go and installs additional packages and Visual Studio Code extensions to make developing Go a bit nicer.
+The DevContainer in this repository is configured specifically for `Go` and installs additional packages and Visual Studio Code extensions to make developing `Go` a bit nicer.
 
 Sample DevContainers for other languages can be found [here](https://github.com/microsoft/vscode-dev-containers/tree/master/containers).
 
 ### Semantic-Release
 
-Semantic-release is highly configurable and offers handy plugins to fit your projects needs!
+[Semantic-release](https://github.com/semantic-release/semantic-release) is highly configurable and offers handy plugins to fit your project needs!
 
-Found in [package.json](package.json) you'll find our semantic-release's configuration. Below is an example:
+Found in [package.json](package.json) you'll find our semantic-release's configuration. Below is an example of what we have:
 
 ```json
 {
@@ -117,28 +117,28 @@ Lets have a quick look at which plugins we're using:
 | - | - | - |
 | `@semantic-release/commit-analyzer` | [Link](https://github.com/semantic-release/commit-analyzer) | Used to analyse git commit message |
 | `@semantic-release/release-notes-generator` | [Link](https://github.com/semantic-release/release-notes-generator) | Responsible for generating the changelog content. |
-| `@semantic-release/changelog` | [Link](https://github.com/semantic-release/changelog) | Utilise by `@semantic-release/release-notes-generator`, responsible for creating and updating a changelog file.
+| `@semantic-release/changelog` | [Link](https://github.com/semantic-release/changelog) | Utilised by `@semantic-release/release-notes-generator`, responsible for creating and updating a changelog file.
 | `@semantic-release/git` | [Link](https://github.com/semantic-release/git) | Allows us to commit back to the repository. |
 | `@semantic-release/exec` | [Link](https://github.com/semantic-release/exec) | Gives us the ability to run shell commands. In our case we use it to export the next release semantic version and to build the project binaries. |
-| `@semantic-release/github` | [Link](https://github.com/semantic-release/github) | Creates GitHub releases and provides the capability to commend on pull requests and issues. |
+| `@semantic-release/github` | [Link](https://github.com/semantic-release/github) | Creates GitHub releases and provides the capability to comment on pull requests and issues. |
 
-**Note:** in your project, if you were to incorporate semantic-release, the two plugins you'll need to configure at the very least are `@semantic-release/exec` and `@semantic-release/github`. Everything else as is should work for your project needs.
+**Note:** in your project if you were to incorporate semantic-release, the two plugins you'll need to configure at the very least are `@semantic-release/exec` and `@semantic-release/github`. Everything else as is should work for your project needs.
 
 #### Why Semantic-Release
 
-[Semantic-release](https://github.com/semantic-release/semantic-release) is a great, standalone tool that sits in your CI pipeline for managing versioning and release of packages/binaries. Semantic-release is responsible for generating changelog, increasing the semantic version, and creating new releases in GitHub.
+Semantic-release is a great, standalone tool that sits in your CI pipeline, used to manage versioning and release of your project. Semantic-release is responsible for generating changelog, increasing the semantic version, and creating new releases in GitHub.
 
 ##### GoReleaser vs. Semantic-Release
 
-[GoReleaser](https://github.com/goreleaser/goreleaser) is another tool that could have been used over semantic-release. It generates go binaries for several platforms, it also creates a new GitHub release but on top of that, GoReleaser also pushes a HomeBrew formula to a tap repository!
+[GoReleaser](https://github.com/goreleaser/goreleaser) is another tool that could have been used over semantic-release. It generates `Go` binaries for several platforms, it creates a new GitHub release but on top of that, GoReleaser also pushes a HomeBrew formula to a tap repository!
 
 So why not GoReleaser? A couple reasons.
 
 1. The release notes are not formatted as they are with semantic-release.
 2. GoReleaser does not commit a `CHANGELOG.md` back to the repo.
-3. It appears GoReleaser only works with Go projects, while semantic-release can work regardless of the underlining language as it's git commit based.
+3. It appears GoReleaser only works with `Go` projects, while semantic-release can work regardless of the underlining language as it's git commit based.
 
-Putting aside the fact this repository uses go as an example project, with some minor tweaks, the configurations used for semantic-release in this repository can be transferred and applied to any project regardless of programming language.
+Putting aside the fact this repository uses `Go` as an example project, with some minor tweaks, the configurations used for semantic-release in this repository can be transferred and applied to any project regardless of programming language.
 
 ##### GitHub Release
 
@@ -148,9 +148,9 @@ Sure, with [Create Release](https://github.com/marketplace/actions/create-releas
 
 ### Go
 
-In this repository there's an extremely basic Go project to demonstrate how semantic-release can be used as apart of your CI pipeline.
+In this repository there's an extremely basic `Go` project to demonstrate how semantic-release can be used as apart of your CI pipeline.
 
-Lets have a look at what the Go project is actually doing.
+Lets have a look at what the `Go` project is actually doing.
 
 ```go
 package main
@@ -186,15 +186,13 @@ In this repository there's one GitHub Action [workflow](.github/workflows/exampl
 
 Looking at the [workflow](.github/workflows/example_build.yaml), linting, testing/building and release are separated into their own jobs.
 
-Firstly, `lint` and `test` run in parallel. `test` runs on `ubuntu-latest`, `macos-latest`, and `windows-latest`, building and testing on Go version `1.12.x` and `1.13.x`. If all jobs complete successfully, the `release` job is then triggered.
+Firstly, `lint` and `test` run in parallel. `test` runs on `ubuntu-latest`, `macos-latest`, and `windows-latest`, and builds/tests `Go` with version `1.12.x` and `1.13.x`. If all jobs complete successfully, the `release` job is triggered.
 
 The reason `lint` isn't apart of the `test` job is because we don't need to worry about whether the project is formatted correctly on different operating systems as linting is more to do with coding styles which is not affected by the system you're running.
 
-Another thing you may notice is the workflow is [triggered](.github/workflows/example_build.yaml#L3-L11) when a pull request is submitted to master and whenever a push to master is performed. 
+Another thing you may notice is the workflow is [triggered](.github/workflows/example_build.yaml#L3-L11) when a pull request is submitted to master and whenever a push to master is performed.
 
-We could have split the workflow into two, one for building and testing for pull request, while the other is used for when pull requests are completed and merge with master to release the binaries. This could save on build times when PRs are performed. 
-
-Instead an `if` [condition](.github/workflows/example_build.yaml#L75) is used to only run the `release` job only when triggered from a push to the master branch.
+We could have split the workflow into two, one for building and testing for pull request, while the other is used for when pull requests are completed and merge with master to release the binaries. This could save on build times when PRs are performed. Instead, an `if` [condition](.github/workflows/example_build.yaml#L75) is used to only run the `release` job when triggered from a push to the master branch.
 
 More information about using GitHub Actions can be found [here](https://help.github.com/en/actions).
 
@@ -202,11 +200,11 @@ More information about using GitHub Actions can be found [here](https://help.git
 
 ### Go Project
 
-What we can do is manually change `version`, `commit` and `build` values inside [main.go](main.go) every time a pull request is made but that's tedious and why do that when semantic-release can do that for us!
+As previously [mentioned](#go), our example project as three variables, a `version`, `commit` and `date`, with default vaules. We could manually change these vaules inside [main.go](main.go) every time a pull request is made but that's tedious and why do that when semantic-release can do that for us!
 
 #### Build + ldflags
 
-In Go, when we go to build the project we can actually override values in the project using `-ldflags`.
+In `Go`, when we build the binaries we can actually override values in the project using the `-ldflags` flag.
 
 Having a look in [Makefile](Makefile#L72-75) we see the following:
 
@@ -235,13 +233,11 @@ Next we're checking if `$RELEASE` is set or not. If it's not, `EXAMPLE_VERSION` 
 
 Using `date -u`, BUILD_DATE is used to hold the current date and time.
 
-After that, we construct `LDFLAGS` using our just defined variables and pass them in using the `-ldflags` when running `go build`.
+After that, we construct `LDFLAGS` using our just defined variables and pass them in using `-ldflags` when running `go build`.
 
 For more in-depth tutorial on using `-ldflags`, see [Using ldflags to Set Version Information for Go Applications](https://www.digitalocean.com/community/tutorials/using-ldflags-to-set-version-information-for-go-applications).
 
 ### Semantic-Release - Constructing Commit Message
-
-It all starts with making and committing a change. The way semantic-release works is through the git commit message.
 
 In order for semantic-release to know how to generate the next release version, you must follow the correct message schema.
 
@@ -283,9 +279,9 @@ For more information, see [semantic-release](https://github.com/semantic-release
 
 In our [workflow](.github/workflows/example_build.yaml), we've set it up so that the workflow is triggered whenever a pull request or a push to the master branch. The semantic-release portion of the workflow will only run once the PR has been approved and merged into master.
 
-Assuming the pull request is approved and merged, the workflow will run again but this time it will also run the `release` [job](.github/workflows/example_build.yaml) of the workflow.
+Assuming the pull request is approved and merged, the workflow will run again but this time it will also run the `release` [job](.github/workflows/example_build.yaml) of our workflow.
 
-The `release` job of our workflow is responsible primarily to building our project's binaries, generating changelog, tagging and creating a new GitHub release.
+The `release` job of our workflow is responsible primarily to building our project's binaries, generating changelog, tagging the commit and creating a new GitHub release.
 
 Lets take a moment and examine what's happening. Below you'll find a snippet of the workflow.
 
@@ -319,7 +315,7 @@ release:
 
 ```
 
-1. The first step is to install `node.js` onto our build agent. This is necessary for semantic-release to run as semantic-release is node based.
+1. The first step is to install `node.js` onto our build agent. This is necessary for semantic-release to run.
 2. Install `Go` so that we can build the example project in this repository.
 3. Checkout this repository so the build agent has a copy of the project to work from.
 4. Next we're going to download the required npm modules specified in [package.json](package.json).
@@ -336,12 +332,14 @@ Once our workflow hits the final step, running semantic-release, here's how sema
 **Note:** At this point, if there was no changes made to the project that requires a new release (e.g. type `fix`, `feat` or `pref` were not used since the last release) then semantic-release will stop here and would not continue.
 
 2. Generate `CHANGELOG.md` with the changes.
-3. Commits `CHANGELOG.md` back to the repository under `docs`.
+3. Commits `CHANGELOG.md` back to the repository under the `docs` folder.
 4. Export the next release version followed by building the example project for `linux`, `darwin` and `windows` architectures. The exported release version is injected when building the binaries using `-ldflags` as mentioned [previously](#build-+-ldflags).
 5. Finally, a new GitHub release is created with our newly built binaries and accompanied changelog.
 
 ## Gotchas
 
-Keep in mind while using semantic-release you may run into trouble using squash + merge when completing pull requests as noted [here](https://github.com/semantic-release/semantic-release/blob/master/docs/support/troubleshooting.md#squashed-commits-are-ignored-by-semantic-release). The reason is most git tools automatically generate the commit message and summary which is most likely not compliant semantic-release's commit message schema.
+Keep in mind while using semantic-release you may run into trouble using squash + merge when completing pull requests as noted [here](https://github.com/semantic-release/semantic-release/blob/master/docs/support/troubleshooting.md#squashed-commits-are-ignored-by-semantic-release). The reason is most git tools automatically generate the commit message and summary which is most likely not compliant with semantic-release's commit message schema.
 
 To get around this make sure to rewrite the commit message so that it is compliant with semantic-release's messaging schema before pushing.
+
+Another thing to note is semantic-release is case sensitive. The types used in your git commit message e.g. `fix`, `docs`, etc. has to be lowercase. Anything else, semantic-release will ignore it.
